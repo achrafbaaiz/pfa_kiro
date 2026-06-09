@@ -1,0 +1,27 @@
+Agis en tant que Lead Data Scientist et Architecte Full-Stack expert en Fintech. Je dois réaliser un Projet de Fin d'Année (PFA) consistant à créer de A à Z une plateforme "mini fintech" de détection de risque de crédit bancaire. 
+
+Cible : Personnes morales (entreprises).
+Algorithme exigé : XGBoost.
+Architecture exigée : 
+- Backend : Python avec FastAPI.
+- Frontend : React.js (ou Next.js) avec Tailwind CSS et Framer Motion pour des animations fluides et une interface "stunning" et ultra-moderne.
+- Graphiques : Recharts ou Chart.js pour des data visualisations élégantes.
+
+Je veux que tu sois mon guide étape par étape. Ne me donne pas tout le code d'un seul coup. Structure ta réponse selon le plan d'action suivant, et donne-moi uniquement les détails de la "Phase 1" pour commencer :
+
+**Phase 1 : Compréhension et Génération des Données**
+Sachant qu'il s'agit de personnes morales, de quelles variables financières exactes avons-nous besoin (ratios de liquidité, endettement, rentabilité, etc.) ? Génère un script Python (`pandas`/`numpy`) pour créer un dataset synthétique réaliste d'au moins 1000 entreprises avec une variable cible "Defaut_Paiement".
+
+**Phase 2 : Prétraitement, EDA et Modélisation (XGBoost)**
+Fournis le code Python pour nettoyer les données, gérer le déséquilibre des classes, et entraîner le modèle XGBoost. Inclus la recherche des meilleurs hyperparamètres et les métriques d'évaluation. Prépare également l'explicabilité du modèle (SHAP values).
+
+**Phase 3 : Développement de l'API Backend (FastAPI)**
+Écris le code de l'API FastAPI qui va charger le modèle XGBoost pré-entraîné. Crée un endpoint `POST /predict` qui recevra les données financières au format JSON et renverra la probabilité de défaut, le niveau de risque, et les valeurs SHAP pour l'explicabilité.
+
+**Phase 4 : Architecture et Design du Front-End (React.js)**
+C'est ici que je veux une interface époustouflante. Fournis le code pour créer un dashboard moderne incluant :
+1. Un formulaire stylisé et interactif pour la saisie des données financières de l'entreprise.
+2. Un affichage dynamique des résultats avec des animations de chargement.
+3. Des jauges (gauges) et des graphiques interactifs pour visualiser le risque et expliquer la décision de l'algorithme au banquier.
+
+Attends ma confirmation après chaque phase avant de passer à la suivante. Commence par détailler et me fournir le code de la Phase 1.
