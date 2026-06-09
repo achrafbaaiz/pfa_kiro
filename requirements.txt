@@ -9,3 +9,4 @@ imbalanced-learn==0.12.3
 joblib==1.4.2
 matplotlib==3.9.1
 seaborn==0.13.2
+reportlab==4.2.2

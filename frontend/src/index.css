@@ -3,3 +3,60 @@
 @tailwind utilities;
 
 body { @apply antialiased; }
+
+/* Ambient background blobs */
+.bg-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-ambient::before,
+.bg-ambient::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
+}
+
+.bg-ambient::before {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #3b82f6, #8b5cf6);
+  top: -10%;
+  right: -5%;
+  animation-delay: -5s;
+}
+
+.bg-ambient::after {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #06b6d4, #3b82f6);
+  bottom: -10%;
+  left: -5%;
+  animation-delay: -10s;
+}
+
+.bg-ambient-extra {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.1;
+  background: radial-gradient(circle, #a855f7, #ec4899);
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: float 25s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
