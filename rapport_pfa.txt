@@ -1,0 +1,794 @@
+
+=============================================================
+RAPPORT DE PROJET DE FIN D'ANNÉE
+=============================================================
+
+Détection de Risque de Crédit Bancaire par Intelligence Artificielle
+
+Réalisé par :
+- Achraf BAAIZ
+- Aabir TANSAOUI
+
+Filière : IDF
+Encadrant : Mme Nabila HAMDOUN
+Établissement : ENSIAS
+Année universitaire : 2025/2026
+
+=============================================================
+
+REMERCIEMENTS
+
+Nous tenons à exprimer notre profonde gratitude à toutes les personnes qui ont contribué à la réalisation de ce projet de fin d'année.
+
+En premier lieu, nous remercions notre encadrante Mme Nabila HAMDOUN pour ses conseils précieux, son suivi rigoureux et son accompagnement tout au long de ce projet. Ses orientations nous ont permis de mener à bien ce travail dans les meilleures conditions.
+
+Nous adressons également nos remerciements à l'ensemble du corps professoral de la filière IDF à l'ENSIAS pour la qualité de la formation dispensée qui nous a fourni les compétences nécessaires à la réalisation de ce projet.
+
+Nous remercions aussi nos familles pour leur soutien inconditionnel et leurs encouragements permanents.
+
+Enfin, nous exprimons notre reconnaissance à toute personne ayant contribué de près ou de loin à l'aboutissement de ce travail.
+
+=============================================================
+
+RÉSUMÉ
+
+Le risque de crédit constitue l'un des défis majeurs du secteur bancaire, en particulier dans l'évaluation de la solvabilité des entreprises (personnes morales). Ce projet de fin d'année présente la conception et la réalisation d'une plateforme intelligente de détection de risque de crédit basée sur des algorithmes de Machine Learning.
+
+Notre solution repose sur un modèle XGBoost entraîné sur un dataset de données financières d'entreprises, intégrant 22 variables explicatives couvrant les ratios de liquidité, d'endettement, de rentabilité et de solvabilité. Le modèle atteint une performance élevée validée par cross-validation 5-fold et comparée à trois autres algorithmes (Random Forest, Gradient Boosting, Régression Logistique).
+
+L'explicabilité des décisions est assurée par la méthode SHAP (SHapley Additive exPlanations), permettant de comprendre les facteurs d'influence derrière chaque prédiction. La plateforme offre également une simulation what-if, un dashboard analytique, une comparaison multi-modèles et la génération automatique de rapports PDF.
+
+L'architecture technique repose sur FastAPI pour le backend, React avec Tailwind CSS pour le frontend, et une API RESTful assurant la communication entre les composants.
+
+Mots-clés : Risque de crédit, Machine Learning, XGBoost, SHAP, Explicabilité, FastAPI, React, Scoring bancaire.
+
+=============================================================
+
+ABSTRACT
+
+Credit risk is one of the major challenges in the banking sector, particularly in assessing the creditworthiness of companies (legal entities). This end-of-year project presents the design and implementation of an intelligent credit risk detection platform based on Machine Learning algorithms.
+
+Our solution relies on an XGBoost model trained on a financial dataset of companies, incorporating 22 explanatory variables covering liquidity, debt, profitability, and solvency ratios. The model achieves high performance validated through 5-fold cross-validation and compared against three other algorithms (Random Forest, Gradient Boosting, Logistic Regression).
+
+Decision explainability is ensured by the SHAP (SHapley Additive exPlanations) method, enabling understanding of the influential factors behind each prediction. The platform also offers what-if simulation, an analytical dashboard, multi-model comparison, and automatic PDF report generation.
+
+The technical architecture is built on FastAPI for the backend, React with Tailwind CSS for the frontend, and a RESTful API ensuring communication between components.
+
+Keywords: Credit risk, Machine Learning, XGBoost, SHAP, Explainability, FastAPI, React, Bank scoring.
+
+=============================================================
+
+TABLE DES MATIÈRES
+
+Remerciements ......................................................... i
+Résumé ................................................................ ii
+Abstract .............................................................. iii
+Table des matières .................................................... iv
+Tables des Figures .................................................... v
+Liste des Tableaux .................................................... vi
+Introduction Générale ................................................. 1
+Chapitre I. Contexte général .......................................... 2
+   I.1. Introduction .................................................. 2
+   I.2. Le risque de crédit bancaire .................................. 2
+   I.3. Intelligence artificielle et scoring de crédit ................ 2
+   I.4. Conclusion .................................................... 2
+Chapitre II. Étude des besoins ........................................ 3
+   II.1. Introduction ................................................. 3
+   II.2. Liste des acteurs ............................................ 3
+   II.3. Besoins fonctionnels ......................................... 3
+   II.4. Besoins non fonctionnels ..................................... 3
+   II.5. Conclusion ................................................... 3
+Chapitre IV. Analyse et Conception .................................... 4
+   IV.1. Introduction ................................................. 4
+   IV.2. Diagramme de cas d'utilisation ............................... 4
+   IV.3. Diagramme de classe .......................................... 4
+   IV.4. Diagrammes de séquence ....................................... 4
+   IV.5. Diagramme d'activité ......................................... 4
+   IV.6. Diagramme de déploiement ..................................... 4
+   IV.7. Conclusion ................................................... 4
+Chapitre V. Réalisation ............................................... 5
+   V.1. Introduction .................................................. 5
+   V.2. Architecture physique ......................................... 5
+   V.3. Architecture logicielle ....................................... 5
+   V.4. Outils utilisés ............................................... 5
+   V.5. Démonstration ................................................. 5
+   V.6. Conclusion .................................................... 5
+Conclusion générale ................................................... 6
+Annexes ............................................................... 7
+Bibliographie ......................................................... 8
+
+=============================================================
+
+TABLES DES FIGURES
+
+Figure 1 : Architecture globale de la plateforme CreditRisk AI
+Figure 2 : Diagramme de cas d'utilisation
+Figure 3 : Diagramme de classe
+Figure 4 : Diagramme de séquence – Prédiction de risque
+Figure 5 : Diagramme de séquence – Simulation what-if
+Figure 6 : Diagramme d'activité – Processus d'analyse
+Figure 7 : Diagramme de déploiement
+Figure 8 : Architecture physique du système
+Figure 9 : Architecture logicielle (Frontend / Backend / ML)
+Figure 10 : Page d'accueil de la plateforme
+Figure 11 : Interface de prédiction avec résultats SHAP
+Figure 12 : Dashboard analytique
+Figure 13 : Page de comparaison des modèles
+Figure 14 : Interface de simulation what-if
+Figure 15 : Rapport PDF généré
+Figure 16 : Matrice de confusion du modèle XGBoost
+Figure 17 : Courbe ROC comparative des 4 modèles
+Figure 18 : Feature importance XGBoost
+
+=============================================================
+
+LISTE DES TABLEAUX
+
+Tableau 1 : Liste des variables explicatives du dataset
+Tableau 2 : Besoins fonctionnels de la plateforme
+Tableau 3 : Besoins non fonctionnels
+Tableau 4 : Comparaison des performances des 4 modèles
+Tableau 5 : Matrice de confusion détaillée
+Tableau 6 : Outils et technologies utilisés
+Tableau 7 : Description des endpoints de l'API
+
+=============================================================
+
+INTRODUCTION GÉNÉRALE
+
+Le secteur bancaire fait face à des défis croissants en matière de gestion du risque de crédit. L'évaluation de la capacité d'une entreprise à honorer ses engagements financiers est un processus critique qui influence directement la stabilité financière des établissements de crédit. Traditionnellement, cette évaluation repose sur l'expertise humaine et des méthodes statistiques classiques, qui présentent des limites en termes de précision, de rapidité et d'objectivité.
+
+L'émergence de l'intelligence artificielle et du Machine Learning offre de nouvelles perspectives pour automatiser et améliorer ce processus décisionnel. Les algorithmes d'apprentissage supervisé, en particulier les méthodes d'ensemble comme XGBoost, ont démontré leur supériorité dans les tâches de classification binaire appliquées au scoring de crédit.
+
+Cependant, l'utilisation de modèles complexes de Machine Learning dans le domaine bancaire soulève la question de l'explicabilité des décisions. Les régulateurs et les analystes de crédit ont besoin de comprendre les raisons derrière chaque décision automatisée. C'est dans ce contexte que les méthodes d'explicabilité comme SHAP prennent toute leur importance.
+
+Notre projet de fin d'année s'inscrit dans cette problématique en proposant une plateforme complète de détection de risque de crédit pour les personnes morales (entreprises). Cette plateforme combine :
+
+- Un modèle de Machine Learning performant (XGBoost) pour la prédiction du risque de défaut
+- Une couche d'explicabilité (SHAP) pour justifier chaque décision
+- Une interface web moderne et interactive pour la visualisation des résultats
+- Des fonctionnalités avancées : simulation what-if, comparaison multi-modèles, dashboard analytique et génération de rapports PDF
+
+Ce rapport est organisé comme suit : le premier chapitre présente le contexte général du risque de crédit et de l'IA appliquée à la finance. Le deuxième chapitre détaille l'étude des besoins. Le quatrième chapitre expose l'analyse et la conception de la solution. Enfin, le cinquième chapitre présente la réalisation technique et une démonstration de la plateforme.
+
+=============================================================
+
+CHAPITRE I. CONTEXTE GÉNÉRAL
+
+I.1. Introduction
+
+Ce chapitre présente le contexte général dans lequel s'inscrit notre projet. Nous abordons d'abord la notion de risque de crédit bancaire, son importance et ses enjeux. Ensuite, nous explorons l'apport de l'intelligence artificielle dans le domaine du scoring de crédit et les avancées récentes en matière d'explicabilité des modèles.
+
+I.2. Le risque de crédit bancaire
+
+Le risque de crédit se définit comme la probabilité qu'un emprunteur ne rembourse pas tout ou partie de son crédit selon les conditions fixées initialement. Pour les banques, il représente la principale source de pertes financières et constitue un facteur déterminant de la stabilité du système financier.
+
+Dans le contexte des personnes morales (entreprises), l'évaluation du risque de crédit repose sur l'analyse de multiples indicateurs financiers :
+
+- Les ratios de liquidité : mesurent la capacité de l'entreprise à faire face à ses obligations à court terme (ratio de liquidité générale, ratio de liquidité réduite)
+- Les ratios d'endettement : évaluent le niveau d'endettement par rapport aux fonds propres (ratio d'endettement, taux d'endettement net, ratio de capacité de remboursement)
+- Les ratios de rentabilité : indiquent la performance économique de l'entreprise (ROE, ROA, marge nette, marge brute)
+- Les indicateurs de solvabilité : évaluent la viabilité à long terme (Score Altman Z, ratio de couverture des intérêts, ratio de fonds propres)
+- L'historique de paiement : incidents de paiement, nombre de crédits en cours
+
+Les méthodes traditionnelles de scoring (score d'Altman, modèles de Merton) présentent des limites face à la complexité croissante des données financières et la nécessité de traiter un volume important de demandes de crédit rapidement.
+
+I.3. Intelligence artificielle et scoring de crédit
+
+L'application du Machine Learning au scoring de crédit a connu un essor significatif ces dernières années. Plusieurs facteurs expliquent cette tendance :
+
+- La disponibilité croissante de données financières structurées
+- La capacité des algorithmes à détecter des relations non-linéaires entre les variables
+- La performance supérieure par rapport aux méthodes statistiques classiques
+
+Parmi les algorithmes les plus utilisés en scoring de crédit :
+
+a) XGBoost (eXtreme Gradient Boosting) : Algorithme d'ensemble basé sur le boosting de gradient. Il construit séquentiellement des arbres de décision, chaque arbre corrigeant les erreurs du précédent. Ses avantages incluent une haute précision, la gestion native des valeurs manquantes, et la régularisation intégrée contre le surapprentissage.
+
+b) Random Forest : Méthode d'ensemble par bagging qui construit de multiples arbres de décision indépendants et agrège leurs prédictions par vote majoritaire. Robuste au bruit et résistant au surapprentissage.
+
+c) Gradient Boosting : Prédécesseur de XGBoost, il utilise le même principe de boosting séquentiel mais sans les optimisations computationnelles de XGBoost.
+
+d) Régression Logistique : Modèle linéaire classique servant de baseline. Simple à interpréter mais limité aux relations linéaires entre les variables.
+
+L'explicabilité des modèles (XAI - Explainable AI) est devenue un enjeu majeur, notamment avec la méthode SHAP (SHapley Additive exPlanations) qui s'appuie sur la théorie des jeux pour attribuer à chaque variable sa contribution marginale à la prédiction. SHAP permet de répondre à la question : "pourquoi le modèle a-t-il classé cette entreprise comme risquée ?"
+
+I.4. Conclusion
+
+Le contexte actuel combine un besoin réel d'amélioration du scoring de crédit bancaire avec la maturité des outils de Machine Learning et d'explicabilité. Notre projet s'inscrit pleinement dans cette dynamique en proposant une solution complète, performante et explicable pour la détection du risque de crédit des entreprises.
+
+=============================================================
+
+CHAPITRE II. ÉTUDE DES BESOINS
+
+II.1. Introduction
+
+Ce chapitre présente l'étude des besoins de notre plateforme de détection de risque de crédit. Nous identifions les acteurs du système, puis détaillons les besoins fonctionnels et non fonctionnels qui guident la conception de la solution.
+
+II.2. Liste des acteurs
+
+Notre système identifie les acteurs suivants :
+
+1. Analyste de crédit (Acteur principal) :
+   - Saisit les données financières des entreprises
+   - Lance les analyses de risque
+   - Consulte les résultats et les explications SHAP
+   - Effectue des simulations what-if
+   - Télécharge les rapports PDF
+   - Consulte le dashboard analytique
+
+2. Data Scientist / Administrateur :
+   - Consulte la comparaison des modèles
+   - Analyse les performances et les métriques
+   - Vérifie la feature importance
+   - Valide le comportement du modèle
+
+3. Système (API Backend) :
+   - Traite les requêtes de prédiction
+   - Exécute les modèles de Machine Learning
+   - Calcule les valeurs SHAP
+   - Génère les rapports et statistiques
+
+II.3. Besoins fonctionnels
+
+BF1 - Prédiction de risque de crédit :
+   - Saisie des données financières d'une entreprise (22 variables)
+   - Calcul de la probabilité de défaut de paiement
+   - Classification en niveaux de risque (Faible, Moyen, Élevé)
+   - Affichage des résultats sous forme de jauge animée
+
+BF2 - Explicabilité des décisions (SHAP) :
+   - Calcul des valeurs SHAP pour chaque prédiction
+   - Visualisation des facteurs d'influence (waterfall chart)
+   - Identification des facteurs de risque vs facteurs protecteurs
+   - Génération de recommandations automatiques
+
+BF3 - Simulation What-If :
+   - Modification interactive des paramètres financiers via sliders
+   - Calcul en temps réel de l'impact sur le risque
+   - Comparaison scénario de base vs scénario modifié
+   - Quantification du delta de probabilité
+
+BF4 - Dashboard Analytique :
+   - Visualisation de la distribution des risques du portefeuille
+   - Statistiques par secteur d'activité et taille d'entreprise
+   - Corrélations des variables avec le défaut de paiement
+   - KPIs globaux (total entreprises, taux de défaut, etc.)
+
+BF5 - Comparaison Multi-Modèles :
+   - Entraînement et évaluation de 4 algorithmes de ML
+   - Affichage comparatif des métriques (Accuracy, Precision, Recall, F1, AUC-ROC)
+   - Cross-validation 5-fold pour la validation
+   - Matrice de confusion interactive
+   - Feature importance
+
+BF6 - Génération de rapports PDF :
+   - Rapport automatique incluant les résultats de prédiction
+   - Données financières de l'entreprise analysée
+   - Facteurs d'influence SHAP
+   - Téléchargement direct depuis l'interface
+
+II.4. Besoins non fonctionnels
+
+BNF1 - Performance :
+   - Temps de prédiction inférieur à 1 seconde
+   - Chargement des pages en moins de 2 secondes
+   - API capable de traiter plusieurs requêtes simultanées
+
+BNF2 - Ergonomie et UX :
+   - Interface moderne, responsive et intuitive
+   - Animations fluides pour une expérience premium
+   - Design dark mode adapté au contexte professionnel
+   - Visualisations interactives (graphiques, jauges, tableaux)
+
+BNF3 - Fiabilité :
+   - Modèle validé par cross-validation
+   - Gestion des erreurs côté frontend et backend
+   - Données de test cohérentes avec le domaine bancaire
+
+BNF4 - Maintenabilité :
+   - Architecture modulaire (séparation frontend/backend)
+   - Code structuré et documenté
+   - API RESTful standard
+
+BNF5 - Portabilité :
+   - Application web accessible depuis tout navigateur moderne
+   - Pas de dépendance à un système d'exploitation spécifique
+
+II.5. Conclusion
+
+L'étude des besoins met en évidence une plateforme riche en fonctionnalités, combinant prédiction par ML, explicabilité, simulation et reporting. Ces besoins guident la conception détaillée présentée dans le chapitre suivant.
+
+=============================================================
+
+CHAPITRE IV. ANALYSE ET CONCEPTION
+
+IV.1. Introduction
+
+Ce chapitre présente la modélisation UML de notre système. Nous utilisons les diagrammes de cas d'utilisation, de classe, de séquence, d'activité et de déploiement pour formaliser l'architecture et le comportement de la plateforme CreditRisk AI.
+
+IV.2. Diagramme de cas d'utilisation
+
+Le diagramme de cas d'utilisation identifie les interactions entre les acteurs et le système :
+
+Acteur : Analyste de crédit
+   - Saisir les données financières
+   - Lancer une prédiction de risque
+   - Consulter les explications SHAP
+   - Effectuer une simulation what-if
+   - Consulter le dashboard
+   - Télécharger un rapport PDF
+
+Acteur : Data Scientist
+   - Consulter la comparaison des modèles
+   - Analyser la feature importance
+   - Vérifier les métriques de performance
+
+Relations :
+   - "Lancer une prédiction" <<include>> "Calculer les valeurs SHAP"
+   - "Lancer une prédiction" <<extend>> "Télécharger un rapport PDF"
+   - "Consulter la comparaison" <<include>> "Entraîner les modèles candidats"
+
+[Figure 2 : Diagramme de cas d'utilisation]
+
+IV.3. Diagramme de classe
+
+Les classes principales du système :
+
+Classe : EntrepriseInput
+   Attributs :
+   - Secteur : String
+   - Taille_Entreprise : String
+   - Anciennete_Annees : Integer
+   - Ratio_Liquidite_Generale : Float
+   - Ratio_Liquidite_Reduite : Float
+   - Ratio_Endettement : Float
+   - Ratio_Capacite_Remboursement : Float
+   - Taux_Endettement_Net : Float
+   - ROE : Float
+   - ROA : Float
+   - Marge_Nette : Float
+   - Marge_Brute : Float
+   - Chiffre_Affaires_Log : Float
+   - Croissance_CA : Float
+   - Ratio_Fonds_Propres : Float
+   - Ratio_Tresorerie_Nette : Float
+   - Delai_Paiement_Clients_Jours : Integer
+   - Delai_Paiement_Fournisseurs_Jours : Integer
+   - Ratio_Couverture_Interets : Float
+   - Score_Altman_Z : Float
+   - Nb_Incidents_Paiement_12M : Integer
+   - Nb_Credits_En_Cours : Integer
+
+Classe : PredictionResult
+   Attributs :
+   - probabilite_defaut : Float
+   - prediction : Integer
+   - niveau_risque : String
+   - couleur_risque : String
+   - shap_values : Dict
+   - base_value : Float
+
+Classe : ModelComparison
+   Attributs :
+   - model_name : String
+   - accuracy : Float
+   - precision : Float
+   - recall : Float
+   - f1_score : Float
+   - auc_roc : Float
+   - confusion_matrix : Dict
+
+Classe : SimulationResult
+   Attributs :
+   - base : PredictionResult
+   - modified : PredictionResult
+   - delta_probabilite : Float
+   - delta_pct : Float
+   - impact : String
+
+Classe : CreditRiskModel
+   Méthodes :
+   - predict(data: EntrepriseInput) : PredictionResult
+   - explain(data: EntrepriseInput) : Dict
+   - compare_models() : List[ModelComparison]
+   - simulate(base: EntrepriseInput, modifications: Dict) : SimulationResult
+   - generate_report(data: EntrepriseInput) : PDF
+
+[Figure 3 : Diagramme de classe]
+
+IV.4. Diagrammes de séquence
+
+Diagramme de séquence 1 : Prédiction de risque
+
+   Analyste -> Frontend : Saisit les données financières
+   Analyste -> Frontend : Clique "Analyser le Risque"
+   Frontend -> API Backend : POST /predict (données JSON)
+   API Backend -> Modèle XGBoost : predict_proba(features)
+   Modèle XGBoost --> API Backend : probabilité de défaut
+   API Backend -> SHAP Explainer : shap_values(features)
+   SHAP Explainer --> API Backend : valeurs SHAP
+   API Backend -> API Backend : get_risk_level(proba)
+   API Backend --> Frontend : JSON (proba, niveau, SHAP, recommandations)
+   Frontend -> Frontend : Affiche jauge, graphiques SHAP, recommandations
+   Frontend --> Analyste : Résultats visuels
+
+[Figure 4 : Diagramme de séquence – Prédiction de risque]
+
+Diagramme de séquence 2 : Simulation What-If
+
+   Analyste -> Frontend : Modifie les sliders de paramètres
+   Analyste -> Frontend : Clique "Lancer la Simulation"
+   Frontend -> API Backend : POST /simulate (base_data + modifications)
+   API Backend -> Modèle XGBoost : predict(base_data)
+   Modèle XGBoost --> API Backend : résultat base
+   API Backend -> Modèle XGBoost : predict(modified_data)
+   Modèle XGBoost --> API Backend : résultat modifié
+   API Backend -> API Backend : calcul delta
+   API Backend --> Frontend : JSON (base, modified, delta, impact)
+   Frontend --> Analyste : Comparaison visuelle + impact
+
+[Figure 5 : Diagramme de séquence – Simulation what-if]
+
+IV.5. Diagramme d'activité
+
+Processus d'analyse de risque de crédit :
+
+   [Début]
+      |
+      v
+   [Saisie des données financières]
+      |
+      v
+   [Validation des données] --erreur--> [Afficher message d'erreur] --> [Fin]
+      |
+      v (valide)
+   [Encodage des variables catégorielles]
+      |
+      v
+   [Prédiction par XGBoost]
+      |
+      v
+   [Calcul des valeurs SHAP]
+      |
+      v
+   [Détermination du niveau de risque]
+      |
+      v
+   <Probabilité >= 0.5 ?>
+      |                    |
+      v (oui)              v (non)
+   [Risque Élevé]     <Probabilité >= 0.3 ?>
+      |                    |              |
+      |                    v (oui)        v (non)
+      |               [Risque Moyen]  [Risque Faible]
+      |                    |              |
+      v                    v              v
+   [Affichage des résultats + SHAP + Recommandations]
+      |
+      v
+   [Fin]
+
+[Figure 6 : Diagramme d'activité – Processus d'analyse]
+
+IV.6. Diagramme de déploiement
+
+   +---------------------------+         +---------------------------+
+   |   Poste Client            |         |   Serveur Application     |
+   |   (Navigateur Web)        |         |                           |
+   |                           |  HTTP   |   +-------------------+   |
+   |   React App (SPA)         |<------->|   | FastAPI (Backend)  |   |
+   |   - Vite Dev Server       |  REST   |   | - /predict         |   |
+   |   - Port 3000             |   API   |   | - /simulate        |   |
+   |                           |         |   | - /stats           |   |
+   +---------------------------+         |   | - /compare-models  |   |
+                                         |   | - /report          |   |
+                                         |   +-------------------+   |
+                                         |           |               |
+                                         |           v               |
+                                         |   +-------------------+   |
+                                         |   | Modèles ML        |   |
+                                         |   | - XGBoost (.joblib)|   |
+                                         |   | - Label Encoders   |   |
+                                         |   | - SHAP Explainer   |   |
+                                         |   +-------------------+   |
+                                         |           |               |
+                                         |           v               |
+                                         |   +-------------------+   |
+                                         |   | Dataset CSV        |   |
+                                         |   | (5000 entreprises) |   |
+                                         |   +-------------------+   |
+                                         +---------------------------+
+
+[Figure 7 : Diagramme de déploiement]
+
+IV.7. Conclusion
+
+La modélisation UML de notre système met en évidence une architecture claire et modulaire. Les diagrammes présentés formalisent les interactions, la structure des données et le flux de traitement. Cette conception sert de base solide pour la phase de réalisation présentée dans le chapitre suivant.
+
+=============================================================
+
+CHAPITRE V. RÉALISATION
+
+V.1. Introduction
+
+Ce chapitre présente la réalisation technique de la plateforme CreditRisk AI. Nous détaillons l'architecture physique et logicielle, les outils et technologies utilisés, puis présentons une démonstration des différentes fonctionnalités de l'application.
+
+V.2. Architecture physique
+
+L'architecture physique de notre plateforme suit un modèle client-serveur :
+
+- Côté client : Navigateur web exécutant l'application React (Single Page Application)
+- Côté serveur : Serveur Python hébergeant l'API FastAPI et les modèles de Machine Learning
+- Communication : Protocole HTTP via une API RESTful (JSON)
+- Proxy de développement : Vite dev server (port 3000) redirige les appels /api vers le backend (port 8001)
+
+Le serveur backend charge au démarrage :
+- Le modèle XGBoost pré-entraîné (xgboost_credit_model.joblib)
+- Les encodeurs de labels (label_encoders.joblib)
+- Les noms des features (feature_names.joblib)
+- L'explainer SHAP (TreeExplainer initialisé sur le modèle)
+- Le dataset complet pour les statistiques (dataset_credit_entreprises.csv)
+
+[Figure 8 : Architecture physique du système]
+
+V.3. Architecture logicielle
+
+L'architecture logicielle est organisée en trois couches :
+
+1. Couche Présentation (Frontend) :
+   - React 18 avec Vite comme bundler
+   - Tailwind CSS pour le styling
+   - Framer Motion pour les animations
+   - Recharts pour les visualisations de données
+   - React Router DOM pour la navigation SPA
+   - Axios pour les appels API
+
+2. Couche Métier (Backend API) :
+   - FastAPI (framework Python asynchrone)
+   - Pydantic pour la validation des données
+   - Endpoints RESTful : /predict, /simulate, /stats, /compare-models, /report, /features
+   - CORS middleware pour la communication cross-origin
+
+3. Couche Intelligence Artificielle :
+   - XGBoost pour la prédiction principale
+   - SHAP (TreeExplainer) pour l'explicabilité
+   - Scikit-learn pour les modèles de comparaison (RandomForest, GradientBoosting, LogisticRegression)
+   - Pandas/NumPy pour le traitement des données
+
+Structure du projet :
+   pfa_kiro/
+   ├── data/
+   │   ├── generate_dataset.py          (Génération du dataset synthétique)
+   │   └── dataset_credit_entreprises.csv (5000 entreprises)
+   ├── models/
+   │   ├── train_xgboost.py             (Script d'entraînement)
+   │   ├── xgboost_credit_model.joblib  (Modèle sérialisé)
+   │   ├── label_encoders.joblib        (Encodeurs catégoriels)
+   │   └── feature_names.joblib         (Liste des features)
+   ├── backend/
+   │   └── main.py                      (API FastAPI)
+   ├── frontend/
+   │   ├── src/
+   │   │   ├── App.jsx                  (Composant racine + routing)
+   │   │   ├── pages/
+   │   │   │   ├── LandingPage.jsx      (Page d'accueil)
+   │   │   │   ├── PredictionPage.jsx   (Analyse de risque)
+   │   │   │   ├── SimulationPage.jsx   (Simulation what-if)
+   │   │   │   ├── DashboardPage.jsx    (Dashboard analytique)
+   │   │   │   └── ModelsPage.jsx       (Comparaison modèles)
+   │   │   └── components/
+   │   │       ├── CreditForm.jsx       (Formulaire de saisie)
+   │   │       └── ResultsDashboard.jsx (Visualisation résultats)
+   │   ├── package.json
+   │   ├── vite.config.js
+   │   └── tailwind.config.js
+   ├── requirements.txt
+   └── README.md
+
+[Figure 9 : Architecture logicielle]
+
+V.4. Outils utilisés
+
+Tableau 6 : Outils et technologies utilisés
+
+| Catégorie            | Outil / Technologie    | Version  | Rôle                                    |
+|----------------------|------------------------|----------|-----------------------------------------|
+| Langage Backend      | Python                 | 3.10+    | Langage principal côté serveur          |
+| Framework API        | FastAPI                | 0.115.0  | API REST haute performance              |
+| Serveur ASGI        | Uvicorn                | 0.30.0   | Serveur de production Python            |
+| ML Principal         | XGBoost                | 2.1.0    | Modèle de prédiction de risque          |
+| Explicabilité        | SHAP                   | 0.45.1   | Explication des décisions du modèle     |
+| ML Comparaison       | Scikit-learn           | 1.5.1    | Random Forest, LR, Gradient Boosting    |
+| Data Processing      | Pandas                 | 2.2.2    | Manipulation des données tabulaires     |
+| Calcul numérique     | NumPy                  | 1.26.4   | Opérations numériques                   |
+| Génération PDF       | ReportLab              | 4.2.2    | Création de rapports PDF                |
+| Sérialisation        | Joblib                 | 1.4.2    | Sauvegarde/chargement des modèles       |
+| Langage Frontend     | JavaScript (JSX)       | ES2022   | Langage côté client                     |
+| Framework UI         | React                  | 18.3.1   | Bibliothèque de composants UI           |
+| Bundler              | Vite                   | 5.4.0    | Build tool rapide pour le développement |
+| Styling              | Tailwind CSS           | 3.4.0    | Framework CSS utility-first             |
+| Animations           | Framer Motion          | 11.0.0   | Animations fluides et interactives      |
+| Graphiques           | Recharts               | 2.12.0   | Visualisations de données React         |
+| HTTP Client          | Axios                  | 1.7.0    | Requêtes HTTP vers l'API                |
+| Routing              | React Router DOM       | 6.23.0   | Navigation SPA côté client              |
+| Versioning           | Git / GitHub           | -        | Gestion de version et collaboration     |
+
+V.5. Démonstration
+
+Notre plateforme propose 5 interfaces principales :
+
+1. Page d'accueil (Landing Page) :
+   Interface fintech premium avec animation de réseau neuronal, carte de score de crédit flottante, statistiques clés du système et présentation des fonctionnalités. Elle sert de point d'entrée et met en valeur les capacités de la plateforme.
+
+[Figure 10 : Page d'accueil de la plateforme]
+
+2. Page de Prédiction :
+   L'analyste saisit les 22 variables financières d'une entreprise organisées par catégorie (Identification, Liquidité, Endettement, Rentabilité, Structure Financière, Trésorerie, Solvabilité). Après soumission, le système affiche :
+   - Une jauge animée de probabilité de défaut
+   - Le niveau de risque (Faible/Moyen/Élevé) avec code couleur
+   - Un graphique SHAP en cascade (facteurs d'influence top 10)
+   - Un diagramme radar du profil de risque
+   - Un pie chart des facteurs de risque vs protecteurs
+   - Des recommandations automatiques basées sur les facteurs SHAP positifs
+   - Un bouton de téléchargement du rapport PDF
+
+[Figure 11 : Interface de prédiction avec résultats SHAP]
+
+3. Dashboard Analytique :
+   Vue d'ensemble du portefeuille complet avec :
+   - KPIs : total entreprises, nombre en défaut, taux de défaut global, nombre de secteurs
+   - Distribution solvables vs défaut (pie chart)
+   - Taux de défaut par secteur d'activité (bar chart)
+   - Taux de défaut par taille d'entreprise (horizontal bar chart)
+   - Top 10 corrélations avec le défaut de paiement
+   - Tableau détaillé par secteur avec barres de progression
+
+[Figure 12 : Dashboard analytique]
+
+4. Page de Comparaison des Modèles :
+   Évaluation comparative de 4 algorithmes de Machine Learning :
+   - Cards de synthèse par modèle (AUC-ROC, Precision, Recall, F1, CV±)
+   - Radar chart multi-critères (5 métriques simultanées)
+   - Bar chart AUC-ROC avec cross-validation 5-fold
+   - Feature importance XGBoost (top 10 variables)
+   - Matrice de confusion interactive (clic sur un modèle)
+   - Tableau comparatif détaillé avec indication du meilleur modèle
+
+[Figure 13 : Page de comparaison des modèles]
+
+5. Simulation What-If :
+   Interface avec 8 sliders interactifs permettant de modifier les paramètres financiers clés et d'observer en temps réel l'impact sur le risque :
+   - Visualisation de l'impact (delta en pourcentage)
+   - Comparaison côte à côte (scénario base vs modifié)
+   - Indication de la direction de l'impact (positif/négatif)
+   - Bar chart comparatif
+
+[Figure 14 : Interface de simulation what-if]
+
+6. Rapport PDF :
+   Le rapport généré automatiquement contient :
+   - Résultat de la prédiction (probabilité, niveau de risque, décision)
+   - Tableau des données financières de l'entreprise
+   - Tableau des facteurs d'influence SHAP (top 8) avec direction d'impact
+
+[Figure 15 : Rapport PDF généré]
+
+V.6. Conclusion
+
+La réalisation de la plateforme CreditRisk AI démontre la faisabilité d'un système intelligent de détection de risque de crédit. L'architecture client-serveur avec une API REST permet une séparation claire des responsabilités. Le choix de XGBoost couplé à SHAP offre le meilleur compromis entre performance prédictive et explicabilité. L'interface React moderne assure une expérience utilisateur fluide et professionnelle.
+
+=============================================================
+
+CONCLUSION GÉNÉRALE
+
+Ce projet de fin d'année avait pour objectif la conception et la réalisation d'une plateforme intelligente de détection de risque de crédit bancaire pour les personnes morales. Au terme de ce travail, nous pouvons dresser le bilan suivant :
+
+Sur le plan scientifique, nous avons démontré la pertinence de l'utilisation du Machine Learning, et en particulier de XGBoost, pour le scoring de crédit. La comparaison rigoureuse de 4 algorithmes avec cross-validation 5-fold a confirmé la supériorité de XGBoost en termes d'AUC-ROC et de F1-score. L'intégration de SHAP apporte une dimension d'explicabilité essentielle dans le contexte bancaire réglementé.
+
+Sur le plan technique, nous avons développé une application web complète intégrant :
+- Un backend performant avec FastAPI servant le modèle ML en temps réel
+- Un frontend moderne et interactif avec React, Tailwind CSS et Framer Motion
+- Des fonctionnalités avancées : simulation what-if, dashboard analytique, comparaison multi-modèles, génération de rapports PDF
+
+Sur le plan méthodologique, nous avons suivi une démarche structurée allant de l'étude des besoins à la réalisation, en passant par la modélisation UML et la conception de l'architecture.
+
+Perspectives d'amélioration :
+- Intégration d'une base de données pour la persistance des analyses
+- Ajout d'un système d'authentification pour la gestion multi-utilisateurs
+- Déploiement en production (Docker + Cloud)
+- Entraînement sur des données réelles issues de partenariats bancaires
+- Ajout de modèles de Deep Learning (réseaux de neurones) pour comparaison
+- Mise en place d'un monitoring du modèle (model drift detection)
+
+Ce projet nous a permis de mettre en pratique les connaissances acquises en Machine Learning, développement web et génie logiciel, tout en abordant une problématique réelle et d'actualité dans le domaine fintech.
+
+=============================================================
+
+ANNEXES
+
+Annexe A : Variables du Dataset
+
+Tableau 1 : Liste des 22 variables explicatives
+
+| # | Variable                          | Type        | Description                              |
+|---|-----------------------------------|-------------|------------------------------------------|
+| 1 | Secteur                           | Catégoriel  | Secteur d'activité de l'entreprise       |
+| 2 | Taille_Entreprise                 | Catégoriel  | TPE, PME, ETI, Grande Entreprise         |
+| 3 | Anciennete_Annees                 | Entier      | Nombre d'années d'existence              |
+| 4 | Ratio_Liquidite_Generale          | Réel        | Actifs CT / Passifs CT                   |
+| 5 | Ratio_Liquidite_Reduite           | Réel        | (Actifs CT - Stocks) / Passifs CT        |
+| 6 | Ratio_Endettement                 | Réel        | Dettes totales / Actifs totaux           |
+| 7 | Ratio_Capacite_Remboursement      | Réel        | Cash-flow / Dettes                       |
+| 8 | Taux_Endettement_Net              | Réel        | Dette nette / Fonds propres              |
+| 9 | ROE                               | Réel        | Return on Equity                         |
+| 10| ROA                               | Réel        | Return on Assets                         |
+| 11| Marge_Nette                       | Réel        | Résultat net / Chiffre d'affaires        |
+| 12| Marge_Brute                       | Réel        | Marge brute / CA                         |
+| 13| Chiffre_Affaires_Log              | Réel        | Log du chiffre d'affaires                |
+| 14| Croissance_CA                     | Réel        | Taux de croissance du CA                 |
+| 15| Ratio_Fonds_Propres               | Réel        | Fonds propres / Actif total              |
+| 16| Ratio_Tresorerie_Nette            | Réel        | Trésorerie nette / Actif total           |
+| 17| Delai_Paiement_Clients_Jours      | Entier      | Délai moyen de paiement clients          |
+| 18| Delai_Paiement_Fournisseurs_Jours | Entier      | Délai moyen de paiement fournisseurs     |
+| 19| Ratio_Couverture_Interets         | Réel        | EBIT / Charges d'intérêts               |
+| 20| Score_Altman_Z                    | Réel        | Score de solvabilité d'Altman            |
+| 21| Nb_Incidents_Paiement_12M         | Entier      | Incidents de paiement sur 12 mois        |
+| 22| Nb_Credits_En_Cours               | Entier      | Nombre de crédits actifs                 |
+
+Variable cible : Defaut_Paiement (0 = Solvable, 1 = Défaut)
+
+Annexe B : Endpoints de l'API
+
+Tableau 7 : Description des endpoints
+
+| Méthode | Endpoint         | Description                                    | Entrée              | Sortie                    |
+|---------|------------------|------------------------------------------------|---------------------|---------------------------|
+| GET     | /                | Vérification du statut de l'API                | -                   | Message + statut          |
+| GET     | /features        | Liste des features et valeurs catégorielles    | -                   | features, secteurs, tailles|
+| POST    | /predict         | Prédiction de risque de crédit                 | EntrepriseInput     | PredictionResult + SHAP   |
+| POST    | /simulate        | Simulation what-if                             | SimulateInput       | Base + Modified + Delta   |
+| GET     | /stats           | Statistiques du portefeuille                   | -                   | Stats globales + détaillées|
+| GET     | /compare-models  | Comparaison de 4 modèles ML                   | -                   | Métriques comparatives    |
+| POST    | /report          | Génération de rapport PDF                      | EntrepriseInput     | Fichier PDF               |
+
+Annexe C : Configuration requise
+
+- Python 3.10+
+- Node.js 18+
+- Dépendances Python : voir requirements.txt
+- Dépendances Node : voir package.json
+
+=============================================================
+
+BIBLIOGRAPHIE
+
+[1] Chen, T., & Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System. Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining.
+
+[2] Lundberg, S. M., & Lee, S. I. (2017). A Unified Approach to Interpreting Model Predictions. Advances in Neural Information Processing Systems (NeurIPS).
+
+[3] Altman, E. I. (1968). Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy. The Journal of Finance, 23(4), 589-609.
+
+[4] Breiman, L. (2001). Random Forests. Machine Learning, 45(1), 5-32.
+
+[5] Friedman, J. H. (2001). Greedy Function Approximation: A Gradient Boosting Machine. The Annals of Statistics, 29(5), 1189-1232.
+
+[6] Hosmer, D. W., & Lemeshow, S. (2000). Applied Logistic Regression. Wiley-Interscience.
+
+[7] Basel Committee on Banking Supervision. (2006). International Convergence of Capital Measurement and Capital Standards (Basel II).
+
+[8] Pedregosa, F., et al. (2011). Scikit-learn: Machine Learning in Python. Journal of Machine Learning Research, 12, 2825-2830.
+
+[9] FastAPI Documentation. https://fastapi.tiangolo.com/
+
+[10] React Documentation. https://react.dev/
+
+[11] Tailwind CSS Documentation. https://tailwindcss.com/
+
+[12] Recharts Documentation. https://recharts.org/
+
+[13] Lessmann, S., et al. (2015). Benchmarking State-of-the-Art Classification Algorithms for Credit Scoring: An Update of Research. European Journal of Operational Research, 247(1), 124-136.
+
+[14] Molnar, C. (2022). Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. https://christophm.github.io/interpretable-ml-book/
+
+=============================================================

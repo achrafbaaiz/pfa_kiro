@@ -4,6 +4,7 @@ import axios from 'axios'
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid,
+  LineChart, Line,
 } from 'recharts'
 
 const MODEL_COLORS = { 'XGBoost': '#3b82f6', 'Random Forest': '#10b981', 'Logistic Regression': '#f59e0b', 'Gradient Boosting': '#8b5cf6' }
@@ -116,6 +117,30 @@ export default function ModelsPage() {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
+        </motion.div>
+
+        {/* ROC Curve */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
+          className="lg:col-span-2 rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
+          <h3 className="text-sm font-medium text-gray-300 mb-4">Courbe ROC Comparative</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart margin={{ top: 5, right: 20, bottom: 20, left: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+              <XAxis type="number" dataKey="fpr" domain={[0, 1]} tick={{ fill: '#9ca3af', fontSize: 10 }} axisLine={false}
+                label={{ value: 'Taux de Faux Positifs (FPR)', position: 'bottom', fill: '#6b7280', fontSize: 10 }} />
+              <YAxis type="number" domain={[0, 1]} tick={{ fill: '#9ca3af', fontSize: 10 }} axisLine={false}
+                label={{ value: 'Taux de Vrais Positifs (TPR)', angle: -90, position: 'left', fill: '#6b7280', fontSize: 10 }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' }}
+                formatter={(v) => [v.toFixed(4)]} />
+              <Legend wrapperStyle={{ fontSize: '11px' }} />
+              {/* Diagonal reference line */}
+              <Line data={[{fpr:0,tpr:0},{fpr:1,tpr:1}]} type="linear" dataKey="tpr" stroke="#374151" strokeDasharray="5 5" dot={false} name="Random" legendType="none" />
+              {data.roc_curves && Object.entries(data.roc_curves).map(([name, points]) => (
+                <Line key={name} data={points} type="monotone" dataKey="tpr" stroke={MODEL_COLORS[name]} strokeWidth={2} dot={false} name={name} />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+          <p className="text-xs text-gray-500 mt-2 text-center">Plus la courbe est proche du coin superieur gauche, meilleur est le modele</p>
         </motion.div>
 
         {/* Feature Importance */}

@@ -1,24 +1,59 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
-// Animated counter
-function AnimatedNumber({ value, suffix = '', duration = 2 }) {
+// Animated counter that counts up
+function AnimatedCounter({ target, suffix = '', decimals = 0 }) {
+  const [count, setCount] = useState(0)
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    if (!started) return
+    const num = parseFloat(target)
+    if (isNaN(num)) { setCount(target); return }
+    let start = 0
+    const duration = 2000
+    const step = 16
+    const increment = num / (duration / step)
+    const timer = setInterval(() => {
+      start += increment
+      if (start >= num) { setCount(num); clearInterval(timer) }
+      else setCount(start)
+    }, step)
+    return () => clearInterval(timer)
+  }, [started, target])
+
   return (
-    <motion.span
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-    >
-      <motion.span
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        {value}{suffix}
-      </motion.span>
+    <motion.span onViewportEnter={() => setStarted(true)} viewport={{ once: true }}>
+      {typeof count === 'number' ? count.toFixed(decimals) : count}{suffix}
     </motion.span>
   )
+}
+
+// Typewriter effect
+function Typewriter({ texts, speed = 80, pause = 2000 }) {
+  const [displayed, setDisplayed] = useState('')
+  const [textIndex, setTextIndex] = useState(0)
+  const [charIndex, setCharIndex] = useState(0)
+  const [deleting, setDeleting] = useState(false)
+
+  useEffect(() => {
+    const current = texts[textIndex]
+    const timeout = setTimeout(() => {
+      if (!deleting) {
+        setDisplayed(current.substring(0, charIndex + 1))
+        setCharIndex(c => c + 1)
+        if (charIndex + 1 === current.length) setTimeout(() => setDeleting(true), pause)
+      } else {
+        setDisplayed(current.substring(0, charIndex - 1))
+        setCharIndex(c => c - 1)
+        if (charIndex === 0) { setDeleting(false); setTextIndex((textIndex + 1) % texts.length) }
+      }
+    }, deleting ? speed / 2 : speed)
+    return () => clearTimeout(timeout)
+  }, [charIndex, deleting, textIndex, texts, speed, pause])
+
+  return <span>{displayed}<span className="animate-pulse text-primary-400">|</span></span>
 }
 
 // Animated network/graph SVG
@@ -112,10 +147,10 @@ const FEATURES = [
 ]
 
 const STATS = [
-  { value: "97.2", suffix: "%", label: "Precision du modele" },
-  { value: "4", suffix: "+", label: "Modeles compares" },
-  { value: "22", suffix: "", label: "Features analysees" },
-  { value: "<1", suffix: "s", label: "Temps de prediction" },
+  { value: 97.2, suffix: "%", label: "Precision du modele", decimals: 1 },
+  { value: 4, suffix: "+", label: "Modeles compares", decimals: 0 },
+  { value: 20, suffix: "", label: "Features analysees", decimals: 0 },
+  { value: 6819, suffix: "", label: "Entreprises dans le dataset", decimals: 0 },
 ]
 
 export default function LandingPage() {
@@ -138,7 +173,9 @@ export default function LandingPage() {
             <h1 className="text-5xl lg:text-6xl font-black leading-tight">
               <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">Detection de</span>
               <br />
-              <span className="bg-gradient-to-r from-primary-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Risque de Credit</span>
+              <span className="bg-gradient-to-r from-primary-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                <Typewriter texts={['Risque de Credit', 'Faillite Bancaire', 'Solvabilite']} speed={100} pause={2500} />
+              </span>
             </h1>
 
             <p className="mt-6 text-lg text-gray-400 leading-relaxed max-w-lg">
@@ -189,12 +226,12 @@ export default function LandingPage() {
       <section className="py-12 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-4 gap-8">
-            {STATS.map(({ value, suffix, label }, i) => (
+            {STATS.map(({ value, suffix, label, decimals }, i) => (
               <motion.div key={label} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 className="text-center">
-                <p className="text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary-400 to-purple-400 bg-clip-text text-transparent">
-                  <AnimatedNumber value={value} suffix={suffix} />
+                <p className="text-3xl lg:text-4xl font-black text-white">
+                  <AnimatedCounter target={value} suffix={suffix} decimals={decimals} />
                 </p>
                 <p className="text-xs text-gray-500 mt-1">{label}</p>
               </motion.div>

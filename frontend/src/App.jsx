@@ -1,24 +1,14 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { ToastProvider } from './components/Toast'
 import LandingPage from './pages/LandingPage'
 import PredictionPage from './pages/PredictionPage'
 import SimulationPage from './pages/SimulationPage'
 import DashboardPage from './pages/DashboardPage'
 import ModelsPage from './pages/ModelsPage'
+import MethodologyPage from './pages/MethodologyPage'
 
-function FloatingParticles() {
-  return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      {[...Array(15)].map((_, i) => (
-        <motion.div key={i} className="absolute rounded-full bg-primary-500/10"
-          style={{ width: 4 + Math.random() * 10, height: 4 + Math.random() * 10, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
-          animate={{ y: [0, -30, 0], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 4 + Math.random() * 6, repeat: Infinity, delay: Math.random() * 3 }}
-        />
-      ))}
-    </div>
-  )
-}
+function FloatingParticles() { return null }
 
 const NAV_ITEMS = [
   { to: "/", label: "Accueil", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
@@ -26,10 +16,12 @@ const NAV_ITEMS = [
   { to: "/simulation", label: "Simulation", icon: "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" },
   { to: "/dashboard", label: "Dashboard", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
   { to: "/models", label: "Modeles", icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" },
+  { to: "/methodology", label: "Science", icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" },
 ]
 
 export default function App() {
   return (
+    <ToastProvider>
     <BrowserRouter>
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-primary-900 relative">
         {/* Ambient background glow */}
@@ -48,7 +40,7 @@ export default function App() {
                 </svg>
               </motion.div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-white to-primary-200 bg-clip-text text-transparent">CreditRisk AI</h1>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-white to-primary-200 bg-clip-text text-transparent">CreditRisk</h1>
                 <p className="text-xs text-gray-400">Plateforme intelligente d'analyse de risque</p>
               </div>
             </NavLink>
@@ -83,6 +75,7 @@ export default function App() {
             <Route path="/simulation" element={<SimulationPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/models" element={<ModelsPage />} />
+            <Route path="/methodology" element={<MethodologyPage />} />
           </Routes>
         </main>
 
@@ -94,5 +87,6 @@ export default function App() {
         </footer>
       </div>
     </BrowserRouter>
+    </ToastProvider>
   )
 }

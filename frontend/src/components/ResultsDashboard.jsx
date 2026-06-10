@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import CreditCard3D from './CreditCard3D'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer, ReferenceLine,
   PieChart, Pie, LineChart, Line, CartesianGrid, Legend, RadarChart, PolarGrid,
@@ -80,6 +81,42 @@ function RiskPieChart({ shap_values }) {
         <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: '8px' }} />
         <Legend wrapperStyle={{ fontSize: '11px', color: '#9ca3af' }} />
       </PieChart>
+    </ResponsiveContainer>
+  )
+}
+
+// --- Financial Health Radar (5 dimensions) ---
+function FinancialHealthRadar({ shap_values, probability }) {
+  // Group features into financial dimensions and compute scores
+  const dimensions = [
+    { name: 'Liquidité', keywords: ['liquid', 'cash', 'current', 'tresorerie'] },
+    { name: 'Solvabilité', keywords: ['debt', 'leverage', 'solvab', 'altman', 'equity', 'fonds'] },
+    { name: 'Rentabilité', keywords: ['roa', 'roe', 'profit', 'margin', 'marge', 'income', 'net'] },
+    { name: 'Activité', keywords: ['turnover', 'revenue', 'sales', 'growth', 'ca', 'rotation'] },
+    { name: 'Historique', keywords: ['incident', 'payment', 'delay', 'credit', 'history', 'age'] },
+  ]
+
+  const data = dimensions.map(dim => {
+    const related = Object.entries(shap_values).filter(([k]) =>
+      dim.keywords.some(kw => k.toLowerCase().includes(kw))
+    )
+    // Score: higher = healthier (inverse of positive SHAP = risk)
+    const avgImpact = related.length > 0
+      ? related.reduce((sum, [, v]) => sum + v, 0) / related.length
+      : 0
+    // Convert to 0-100 score: negative SHAP = good = high score
+    const score = Math.max(5, Math.min(95, 50 - avgImpact * 200))
+    return { dimension: dim.name, score: Math.round(score), fullMark: 100 }
+  })
+
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <RadarChart data={data}>
+        <PolarGrid stroke="#374151" />
+        <PolarAngleAxis dataKey="dimension" tick={{ fill: '#d1d5db', fontSize: 11 }} />
+        <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+        <Radar dataKey="score" stroke="#6366f1" fill="#6366f1" fillOpacity={0.25} strokeWidth={2} />
+      </RadarChart>
     </ResponsiveContainer>
   )
 }
@@ -171,7 +208,7 @@ function HistoryChart({ history }) {
 
 // --- Main Results Dashboard ---
 export default function ResultsDashboard({ results, history = [] }) {
-  const { probabilite_defaut, prediction, niveau_risque, couleur_risque, shap_values, base_value } = results
+  const { probabilite_defaut, prediction, niveau_risque, couleur_risque, shap_values, base_value, credit_rating } = results
 
   return (
     <div className="space-y-4">
@@ -186,6 +223,42 @@ export default function ResultsDashboard({ results, history = [] }) {
           </div>
         </div>
         <RiskGauge probability={probabilite_defaut} niveau={niveau_risque} couleur={couleur_risque} />
+      </motion.div>
+
+      {/* Credit Rating Card */}
+      {credit_rating && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}
+          className="rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Credit Rating (S&P Scale)</p>
+              <p className="text-xs text-gray-400">{credit_rating.description}</p>
+            </div>
+            <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ delay: 0.5, type: 'spring' }}
+              className="flex flex-col items-center">
+              <span className="text-4xl font-black tracking-tight" style={{ color: credit_rating.color }}>{credit_rating.rating}</span>
+              <div className="flex gap-0.5 mt-1">
+                {['AAA','AA','A','BBB','BB','B','CCC','CC','C','D'].map(r => (
+                  <div key={r} className={`w-2 h-1 rounded-full ${r === credit_rating.rating ? 'opacity-100' : 'opacity-20'}`}
+                    style={{ backgroundColor: r === credit_rating.rating ? credit_rating.color : '#4b5563' }} />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* 3D Credit Card */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
+        className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm flex justify-center">
+        <CreditCard3D risk={probabilite_defaut} niveau={niveau_risque} />
+      </motion.div>
+
+      {/* Financial Health Radar */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+        className="rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
+        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Santé Financière</h4>
+        <FinancialHealthRadar shap_values={shap_values} probability={probabilite_defaut} />
       </motion.div>
 
       {/* Pie + Radar side by side */}
