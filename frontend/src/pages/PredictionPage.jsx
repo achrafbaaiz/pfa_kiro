@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useToast } from '../components/Toast'
 import CreditForm from '../components/CreditForm'
 import ResultsDashboard from '../components/ResultsDashboard'
-import axios from 'axios'
+import api from '../api'
 
 function FeatureImpactGuide() {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    axios.get('/api/stats').then(res => setData(res.data)).catch(() => {})
+    api.get('/stats').then(res => setData(res.data)).catch(() => {})
   }, [])
 
   if (!data) return null

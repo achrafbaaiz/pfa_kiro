@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import axios from 'axios'
+import api from '../api'
 
 function MiniRiskMeter({ risk }) {
   if (risk === null) return null
@@ -46,7 +46,7 @@ export default function CreditForm({ setResults, setLoading, loading }) {
   const [liveRisk, setLiveRisk] = useState(null)
 
   useEffect(() => {
-    axios.get('/api/features').then(res => {
+    api.get('/features').then(res => {
       setFeatures(res.data.features)
       setStats(res.data.stats)
       setBankruptExample(res.data.bankrupt_example || {})
@@ -59,7 +59,7 @@ export default function CreditForm({ setResults, setLoading, loading }) {
   useEffect(() => {
     if (features.length === 0) return
     const timer = setTimeout(() => {
-      axios.post('/api/predict', { features: form }).then(res => {
+      api.post('/predict', { features: form }).then(res => {
         setLiveRisk(res.data.probabilite_defaut)
       }).catch(() => {})
     }, 400)
@@ -79,7 +79,7 @@ export default function CreditForm({ setResults, setLoading, loading }) {
     setLoading(true)
     setError(null)
     try {
-      const res = await axios.post('/api/predict', { features: form })
+      const res = await api.post('/predict', { features: form })
       setResults(res.data)
     } catch (err) {
       setError(err.response?.data?.detail || "Erreur de connexion au serveur")
@@ -200,7 +200,8 @@ export default function CreditForm({ setResults, setLoading, loading }) {
 
           <motion.button type="button" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
             onClick={async () => {
-              const res = await fetch('/api/report', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ features: form }) })
+              const baseUrl = import.meta.env.VITE_API_URL || '/api'
+              const res = await fetch(`${baseUrl}/report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ features: form }) })
               const blob = await res.blob()
               const url = window.URL.createObjectURL(blob)
               const a = document.createElement('a'); a.href = url; a.download = 'rapport_risque_credit.pdf'; a.click()

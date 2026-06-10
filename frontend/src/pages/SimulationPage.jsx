@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import axios from 'axios'
+import api from '../api'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts'
 
 export default function SimulationPage() {
@@ -14,7 +14,7 @@ export default function SimulationPage() {
   const [stressLoading, setStressLoading] = useState(false)
 
   useEffect(() => {
-    axios.get('/api/features').then(res => {
+    api.get('/features').then(res => {
       const feats = res.data.features.slice(0, 8)
       setFeatures(feats)
       setStats(res.data.stats)
@@ -34,7 +34,7 @@ export default function SimulationPage() {
   const simulate = async () => {
     setLoading(true)
     try {
-      const res = await axios.post('/api/simulate', { base_data: baseData, modifications: sliders })
+      const res = await api.post('/simulate', { base_data: baseData, modifications: sliders })
       setResult(res.data)
     } catch (err) { console.error(err) }
     setLoading(false)
@@ -43,7 +43,7 @@ export default function SimulationPage() {
   const runStressTest = async () => {
     setStressLoading(true)
     try {
-      const res = await axios.post('/api/stress-test', { base_data: { ...baseData, ...sliders } })
+      const res = await api.post('/stress-test', { base_data: { ...baseData, ...sliders } })
       setStressResult(res.data)
     } catch (err) { console.error(err) }
     setStressLoading(false)

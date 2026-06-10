@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import axios from 'axios'
+import api from '../api'
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid,
@@ -15,7 +15,7 @@ export default function ModelsPage() {
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
-    axios.get('/api/compare-models').then(res => { setData(res.data); setLoading(false) }).catch(() => setLoading(false))
+    api.get('/compare-models').then(res => { setData(res.data); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   if (loading) return (

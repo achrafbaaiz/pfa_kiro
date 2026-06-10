@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import axios from 'axios'
+import api from '../api'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
   PieChart, Pie, Legend, CartesianGrid
@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    axios.get('/api/stats').then(res => { setStats(res.data); setLoading(false) }).catch(() => setLoading(false))
+    api.get('/stats').then(res => { setStats(res.data); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   if (loading) return (
